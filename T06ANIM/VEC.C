@@ -1,6 +1,14 @@
 #include "vec.h"
 
-
+static MATR UnitMatrix =
+{
+  {
+    {1, 0, 0, 0},
+    {0, 1, 0, 0},
+    {0, 0, 1, 0},
+    {0, 0, 0, 1}
+  }
+};
 
 MATR MatrUnit( VOID )
 {
@@ -33,9 +41,9 @@ MATR MatrRotateZ( DBL AngleDegree )
   DOUBLE si = sin(AngleDegree), co = cos(AngleDegree);
 
   m.A[0][0] = co;
-  m.A[0][1] = -si;
+  m.A[1][0] = -si;
   m.A[1][1] = co;
-  m.A[1][0] = si;
+  m.A[0][1] = si;
   return m;
 
 }
@@ -57,10 +65,10 @@ MATR MatrRotateX( DBL AngleDegree )
   MATR m = UnitMatrix;
   DOUBLE si = sin(AngleDegree), co = cos(AngleDegree);
 
-  m.A[0][0] = co;
-  m.A[0][1] = si;
-  m.A[1][0] = -si;
   m.A[1][1] = co;
+  m.A[1][2] = si;
+  m.A[2][1] = -si;
+  m.A[2][2] = co;
   return m;
 }
 
@@ -77,9 +85,9 @@ MATR MatrRotate( DBL AngleDegree, DBL X, DBL Y, DBL Z )
   Y *= si;
   Z *= si;
 
-  m.A[0][0] = 1 - 2 * (Y * Y + Z* Z);
+  m.A[0][0] = 1 - 2 * (Y * Y + Z * Z);
   m.A[0][1] = 2 * X * Y - 2 * co * Z;
-  m.A[0][2] = 2 *co * Y - 2 * co * Z;
+  m.A[0][2] = 2 * co * Y + 2 * X * Z;
   m.A[0][3] = 0;
   m.A[1][0] = 2 * X * Y + 2 * co * Z;
   m.A[1][1] = 1 - 2 * (X * X + Z * Z);
@@ -213,4 +221,35 @@ MATR MatrInverse( MATR M )
                   M.A[2][0], M.A[2][1], M.A[2][2]) / det;
   return r;  
 }
+
+MATR MatrViewLookAt(VEC Loc, VEC At, VEC Up)
+{
+  VEC Dir = VecSubVec(At, Loc),
+      Right=VecCrossVec(Dir, Up);
+  MATR m;
+  
+  Dir = VecNormalize(Dir);
+  Right = VecNormalize(Right);
+  Up = VecCrossVec(Right, Dir);
+
+  m.A[0][0] = Right.X;
+  m.A[0][1] = Up.X;
+  m.A[0][2] = -Dir.X;
+  m.A[0][3] = 0;
+  m.A[1][0] = Right.Y;
+  m.A[1][1] = Up.Y;
+  m.A[1][2] = -Dir.Y;
+  m.A[1][3] = 0;
+  m.A[2][0] = Right.Z;
+  m.A[2][1] = Up.Z;
+  m.A[2][2] = -Dir.Z;
+  m.A[2][3] = 0;
+  m.A[3][0] = -VecDotVec(Loc, Right);
+  m.A[3][1] = -VecDotVec(Loc, Up);
+  m.A[3][2] = VecDotVec(Loc, Dir);
+  m.A[3][3] =  1;
+
+  return m;
+}
+
 

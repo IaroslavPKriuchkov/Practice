@@ -4,7 +4,7 @@
  * PURPOSE: Joystick interpretation module.
  */
 
-#include "vec.h"
+//#include "vec.h"
 #include "anim.h"
 #include "units.h"
 #include "def.h"

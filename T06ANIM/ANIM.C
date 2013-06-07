@@ -15,6 +15,7 @@ static BOOL IK1_IsInit;
 static ik1ANIM IK1_Anim;
 
 
+
 #define IK1_MAX_UNITS 1000
 INT IK1_NumOfUnits;
 static ik1UNIT *IK1_Units[IK1_MAX_UNITS];
@@ -34,6 +35,11 @@ BOOL IK1_AnimInit( HWND hWnd )
   for (i = 0; i < IK1_NumOfUnits; i++)
     IK1_Units[i]->Init(IK1_Units[i], &IK1_Anim);
 
+  IK1_Anim.MatrWorld = MatrUnit();
+  IK1_Anim.MatrView = MatrUnit();
+  IK1_Anim.PD = 1;
+  IK1_Anim.Wp = 1;
+  IK1_Anim.Hp = 1;
   return TRUE;
 } /* End of 'IK1_AnimInit' function */
 
@@ -190,5 +196,30 @@ VOID IK1_AnimAdd( ik1UNIT *Unit )
     return;
   IK1_Units[IK1_NumOfUnits++] = Unit;
 } /* End of 'IK1_AnimAdd' function */
+
+POINT IK1_AnimWorldToScreen(VEC P)
+{
+ 
+  
+  VEC P1, P2, P3;  
+  INT XS, YS;
+  POINT pt;
+  P1 = VecMulMatr(P, IK1_Anim.MatrWorld);
+  P2 = VecMulMatr(P1,IK1_Anim.MatrView);
+  P3.X = P2.X *  IK1_Anim.PD / P2.Z;
+  P3.Y = P2.Y *  IK1_Anim.PD / P2.Z;
+
+  P3.X *= 2/(IK1_Anim.Wp);
+  P3.Y *= 2/(IK1_Anim.Hp);
+                             
+  XS = ((P3.X + 1) / 2) * (IK1_Anim.W - 1);
+  YS = ((-P3.Y + 1) / 2) * (IK1_Anim.H - 1);
+
+  pt.x = XS;
+  pt.y = YS;
+
+  return pt;
+
+}
 
 /* END OF 'ANIM.C' FILE */

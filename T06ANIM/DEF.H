@@ -3,7 +3,6 @@
  * DATE: 06.06.2013
  * PURPOSE: Common definition declaration module.
  */
-
 #ifndef __DEF_H_
 #define __DEF_H_
 

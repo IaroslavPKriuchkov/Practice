@@ -8,6 +8,8 @@
 #define __ANIM_H_
 
 #include "def.h"
+#include "vec.h"
+
 
 typedef struct tagik1ANIM
 {
@@ -22,6 +24,17 @@ typedef struct tagik1ANIM
   BYTE JBut[32], JButOld[32];
   DBL Jx, Jy, Jz, Jr;
   INT Jpov;
+  VEC
+    CameraLoc,
+    CameraDir,
+    CameraUp,
+    CameraRight,
+    CameraLookAt;
+  MATR 
+    MatrWorld,
+    MatrView;
+  DBL Wp, Hp, PD;
+
 } ik1ANIM;
 
 typedef struct tagik1UNIT ik1UNIT;
@@ -59,6 +72,8 @@ ik1UNIT * IK1_UnitCreate( INT Size );
 VOID IK1_AnimAdd( ik1UNIT *Unit );
 
 ik1UNIT * CowCreate( INT X, INT Y );
+
+POINT IK1_AnimWorldToScreen(VEC P);
 
 #endif /* __ANIM_H_ */
 

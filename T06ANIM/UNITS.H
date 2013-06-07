@@ -4,7 +4,6 @@
  * PURPOSE: Animation unit samples declaration module.
  */
 
-
 #ifndef __UNITS_H_
 #define __UNITS_H_
 

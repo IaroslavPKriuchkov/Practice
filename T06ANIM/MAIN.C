@@ -11,7 +11,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <time.h>
-#include "vec.h"
+//#include "vec.h"
 #include "anim.h"
 
 #define WND_CLASS_NAME "MainWindowClass"
@@ -30,9 +30,9 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   MSG msg;
   INT i;
 
-  for (i = 0; i < 2; i++)
+  for (i = 0; i < 1; i++)
   {
-    IK1_AnimAdd(CowCreate(rand() % 300, rand() % 300));
+    IK1_AnimAdd(CowCreate(/*rand() %*/ 300, /*rand() %*/ 300));
   }
 
 
@@ -64,72 +64,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 }
 
 
-/* Vertex array */
-VEC *Vertexes, *VertexesProj;
-INT NumOfVertexes;
 
-/* Facet array */
-INT (*Facets)[3];
-INT NumOfFacets;
-
-/* Load cow function */
-VOID LoadCow( VOID )
-{
-  FILE *F;
-  INT fn = 0, vn = 0;
-  static CHAR Buf[1000];
-
-  if ((F = fopen("cow_new1.object", "rt")) == NULL)
-    return;
-
-  while (fgets(Buf, sizeof(Buf), F) != NULL)
-    if (Buf[0] == 'v' && Buf[1] == ' ')
-      vn++;
-    else if (Buf[0] == 'f' && Buf[1] == ' ')
-      fn++;
-
-  if ((Vertexes = malloc(2 * sizeof(VEC) * vn)) == NULL)
-  {
-    fclose(F);
-    return;
-  }
-  if ((Facets = malloc(sizeof(INT [3]) * fn)) == NULL)
-  {
-    free(Vertexes);
-    fclose(F);
-    return;
-  }
-  NumOfVertexes = vn;
-  NumOfFacets = fn;
-  VertexesProj = Vertexes + NumOfVertexes;
-
-  vn = 0;
-  fn = 0;
-  rewind(F);
-  while (fgets(Buf, sizeof(Buf), F) != NULL)
-    if (Buf[0] == 'v' && Buf[1] == ' ')
-    {
-      DBL x, y, z;
-
-      sscanf(Buf + 2, "%lf%lf%lf", &x, &y, &z);
-      Vertexes[vn].X = x;
-      Vertexes[vn].Y = y;
-      Vertexes[vn].Z = z;
-      vn++;
-    }
-    else if (Buf[0] == 'f' && Buf[1] == ' ')
-    {
-      INT n1, n2, n3;
-
-      sscanf(Buf + 2, "%d%d%d", &n1, &n2, &n3);
-      Facets[fn][0] = n1 - 1;
-      Facets[fn][1] = n2 - 1;
-      Facets[fn][2] = n3 - 1;
-      fn++;
-    }
-
-  fclose(F);
-} /* End of 'LoadCow' function */
 
  INT w, h;
 LRESULT CALLBACK TranslateMessages( HWND hWnd, UINT Msg,
