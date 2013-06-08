@@ -37,6 +37,7 @@ BOOL IK1_AnimInit( HWND hWnd )
 
   IK1_Anim.MatrWorld = MatrUnit();
   IK1_Anim.MatrView = MatrUnit();
+  IK1_Anim.MatrProj = MatrUnit();
   IK1_Anim.PD = 1;
   IK1_Anim.Wp = 1;
   IK1_Anim.Hp = 1;
@@ -199,27 +200,60 @@ VOID IK1_AnimAdd( ik1UNIT *Unit )
 
 POINT IK1_AnimWorldToScreen(VEC P)
 {
- 
+  /*
   
-  VEC P1, P2, P3;  
+  VEC P1, P2, P3, P4;  
   INT XS, YS;
   POINT pt;
+
   P1 = VecMulMatr(P, IK1_Anim.MatrWorld);
   P2 = VecMulMatr(P1,IK1_Anim.MatrView);
-  P3.X = P2.X *  IK1_Anim.PD / P2.Z;
-  P3.Y = P2.Y *  IK1_Anim.PD / P2.Z;
+  P3 = VecMulMatr(P2,IK1_Anim.MatrProj);
+  P4.X = P3.X *  IK1_Anim.PD / -P3.Z;
+  P4.Y = -P3.Y *  IK1_Anim.PD / -P3.Z;
 
-  P3.X *= 2/(IK1_Anim.Wp);
-  P3.Y *= 2/(IK1_Anim.Hp);
+  
+  P4.X *= 2/(IK1_Anim.Wp);
+  P4.Y *= 2/(IK1_Anim.Hp);
                              
-  XS = ((P3.X + 1) / 2) * (IK1_Anim.W - 1);
-  YS = ((-P3.Y + 1) / 2) * (IK1_Anim.H - 1);
+  XS = (P4.X + 1)  *  ((IK1_Anim.W - 1) / 2);
+  YS = (P4.Y + 1)  * ((IK1_Anim.H - 1) / 2);
 
   pt.x = XS;
   pt.y = YS;
 
   return pt;
+    */
+  VEC P1, P2, P3, P4;
+  POINT pt;
+  DBL Dx = 0;
+                 
+  MatrWorld = MatrMulMatr(MatrRotateX(IB1_Anim.Jx), MatrRotateY(IB1_Anim.Jy));
+  //MatrView = MatrUnit();
+  //MatrWorld = MatrUnit();
+  MatrView = MatrViewLookAt(VecSet(500, 500, 500), VecSet(0, 0, 0), VecSet(0, 1, 0)); 
+  //MatrWorld = MatrTranslate(IB1_Anim.Time, Dy, Dz);
+  MatrProj = MatrProject(-100, 100, -100, 100, 100, 10000);
 
+  Wp = 1.0 * IB1_Anim.W / IB1_Anim.H;
+  Hp = 1.0 * IB1_Anim.H / IB1_Anim.W;
+  PD = 1.0;
+
+  P1 = VecMulMatr(P, MatrWorld); 
+  P2 = VecMulMatr(P1, MatrView);
+  P3 = VecMulMatr(P2, MatrProj);
+
+  P4.X = P3.X * PD / P3.Z;
+  P4.Y = P3.Y * PD / P3.Z;
+
+
+  P4.X *= 2 / Wp;
+  P4.Y *= 2 / Hp;
+
+  pt.x = ((P4.X + 1) / 2) * (IB1_Anim.W - 1);
+  pt.y = ((-P4.Y + 1) / 2) * (IB1_Anim.H - 1);
+
+  return pt;
 }
 
 /* END OF 'ANIM.C' FILE */

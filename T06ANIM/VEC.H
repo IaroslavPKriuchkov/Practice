@@ -86,10 +86,10 @@ __inline VEC VecNormalize( VEC V )
 }
 
  _inline VEC VecMulMatr( VEC V, MATR M )                  
-{                               
-  return VecSet(V.X * M.A[0][0] + V.Y * M.A[0][1] + V.Z * M.A[0][2],
-                V.X * M.A[1][0] + V.Y * M.A[1][1] + V.Z * M.A[1][2],
-                V.X * M.A[2][0] + V.Y * M.A[2][1] + V.Z * M.A[2][2]);
+{                                                                                             
+  return VecSet(V.X * M.A[0][0] + M.A[3][0] + V.Y * M.A[0][1] + V.Z * M.A[0][2] ,
+                V.X * M.A[1][0] + V.Y * M.A[1][1] + M.A[3][1] + V.Z * M.A[1][2] ,
+                V.X * M.A[2][0] + V.Y * M.A[2][1] + V.Z * M.A[2][2] + M.A[3][2]);
 }
 
 MATR MatrUnit( VOID );
@@ -106,3 +106,4 @@ DBL MatrDeterm3x3( DBL A11, DBL A12, DBL A13,
                      DBL A31, DBL A32, DBL A33 );
 MATR MatrMulMatr( MATR M1, MATR M2 );
 MATR MatrViewLookAt(VEC Loc, VEC At, VEC UP);
+MATR MatrProject(DBL l, DBL r, DBL b, DBL t, DBL n, DBL f);

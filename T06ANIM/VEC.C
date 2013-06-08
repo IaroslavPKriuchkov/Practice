@@ -234,21 +234,44 @@ MATR MatrViewLookAt(VEC Loc, VEC At, VEC Up)
 
   m.A[0][0] = Right.X;
   m.A[0][1] = Up.X;
-  m.A[0][2] = -Dir.X;
+  m.A[0][2] = Dir.X;
   m.A[0][3] = 0;
   m.A[1][0] = Right.Y;
   m.A[1][1] = Up.Y;
-  m.A[1][2] = -Dir.Y;
+  m.A[1][2] = Dir.Y;
   m.A[1][3] = 0;
   m.A[2][0] = Right.Z;
   m.A[2][1] = Up.Z;
-  m.A[2][2] = -Dir.Z;
+  m.A[2][2] = Dir.Z;
   m.A[2][3] = 0;
   m.A[3][0] = -VecDotVec(Loc, Right);
   m.A[3][1] = -VecDotVec(Loc, Up);
-  m.A[3][2] = VecDotVec(Loc, Dir);
+  m.A[3][2] = -VecDotVec(Loc, Dir);
   m.A[3][3] =  1;
 
+  return m;
+}
+
+MATR MatrProject(DBL l, DBL r, DBL b, DBL t, DBL n, DBL f)
+{
+  MATR m;
+
+  m.A[0][0] = (2 * n)/ (r - l);
+  m.A[0][1] = 0;
+  m.A[0][2] = 0;
+  m.A[0][3] = 0;
+  m.A[1][0] = 0;
+  m.A[1][1] = (2 * n)/ (t - b);
+  m.A[1][2] = 0;
+  m.A[1][3] = 0;
+  m.A[2][0] = (r + l) / (r - l);
+  m.A[2][1] = (t + b) / (t - b);
+  m.A[2][2] = (-1) * ((f + n) / (f - n));
+  m.A[2][3] = -1;
+  m.A[3][0] = 0;
+  m.A[3][1] = 0;
+  m.A[3][2] = ( -2 * n * f) / (f - n);
+  m.A[3][3] =  0;
   return m;
 }
 

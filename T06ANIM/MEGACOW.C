@@ -14,7 +14,8 @@
 
 
 /* Vertex array */
-static VEC *Vertexes, *VertexesProj;
+static VEC *Vertexes; 
+static POINT *VertexesProj;
 static INT NumOfVertexes;
 
 /* Facet array */
@@ -47,20 +48,20 @@ VOID LoadCow( VOID )
     else if (Buf[0] == 'f' && Buf[1] == ' ')
       fn++;
 
-  if ((Vertexes = malloc( sizeof(VEC) * vn + sizeof(INT[3]) * fn + sizeof(POINT) * vn)) == NULL)
+  if ((Vertexes = malloc(2 * sizeof(VEC) * vn)) == NULL)
   {
     fclose(F);
     return;
   }
-  /*if ((Facets = malloc(sizeof(INT [3]) * fn)) == NULL)
+  if ((Facets = malloc(sizeof(INT [3]) * fn)) == NULL)
   {
     free(Vertexes);
     fclose(F);
     return;
-  } */
+  }
   NumOfVertexes = vn;
   NumOfFacets = fn;
-  VertexesProj = Vertexes + NumOfVertexes;
+  VertexesProj = (POINT *)(Vertexes + NumOfVertexes);
 
   vn = 0;
   fn = 0;
@@ -83,15 +84,14 @@ VOID LoadCow( VOID )
       sscanf(Buf + 2, "%d%d%d", &n1, &n2, &n3);
       Facets[fn][0] = n1 - 1;
       Facets[fn][1] = n2 - 1;
-      Facets[fn][2] = n3 - 1;
+      Facets[fn][2] = n3 - 1;                                                                    
       fn++;
     }
 
   fclose(F);
-} /* End of 'LoadCow' function */
-
+}
 static VOID CowRender( COW *Unit, ik1ANIM *Ani )
-{
+{ /*
   DBL t = (DBL)clock() / CLOCKS_PER_SEC;
   INT
     i, j, y;
@@ -131,23 +131,32 @@ static VOID CowRender( COW *Unit, ik1ANIM *Ani )
     break;
   };
 
-  SelectObject(Ani->hDC, GetStockObject(DC_BRUSH));
+  SelectObject(Ani->hDC, GetStockObject(NULL_BRUSH));
   SelectObject(Ani->hDC, GetStockObject(DC_PEN));
-  SetDCPenColor(Ani->hDC, RGB(255, 255, 255));
+  SetDCPenColor(Ani->hDC, RGB(200, 150, 100));
   SetDCBrushColor(Ani->hDC, RGB(200, 150, 100));
 
-  Ani->MatrView = MatrViewLookAt(VecSet(Ani->Jpov * 25, -Ani->Jpov * 25, Ani->Jpov * 25), VecSet(Unit->X+10, Unit->Y+10,100), VecSet(0,1,0)); 
-
-  Ani->MatrWorld = MatrScale(30,30,30); 
-
-                                                                  
 
 
 
- /* m = MatrMulMatr(MatrScale(30, 30, 30),MatrRotateX(90));*/
-  
 
 
+
+
+
+
+
+
+  Ani->MatrView = MatrViewLookAt(VecSet(500 , 500 , 500), VecSet(0, 0, 0), VecSet(0,1,0)); 
+
+
+  Ani->MatrWorld = MatrMulMatr(MatrMulMatr(MatrMulMatr(MatrScale(2, 2, 2), MatrTranslate(0,0,-200)), MatrRotateZ((t) * 0.10)), MatrRotateX(0)); 
+  Ani->MatrProj = MatrProject(-100, +100, -100, +100, -100, +100);                                                                
+
+
+  m = MatrMulMatr(MatrMulMatr(Ani->MatrView, Ani->MatrWorld), Ani->MatrProj);
+
+                               /*sdfsdf*/
   for (i = 0; i < NumOfVertexes; i++)
   {
     VEC v, v1;
@@ -161,16 +170,17 @@ static VOID CowRender( COW *Unit, ik1ANIM *Ani )
     POINT p[3];
     for (j = 0; j < 3; j++)
     {
-     /* 
-      p[j].x = VertexesProj[Facets[i][j]].X;         
-      p[j].y = VertexesProj[Facets[i][j]].Y;
-     */
-      p[j] = IK1_AnimWorldToScreen(VertexesProj[Facets[i][j]]);
+      
+      p[j] = VertexesProj[Facets[i][j]];         
+  
+     
+      //p[j] = IK1_AnimWorldToScreen(VertexesProj[Facets[i][j]]);
     }
     Polygon(Ani->hDC, p, 3);
+  
   }  
 
-  f/*or (i = 0; i < NumOfVertexes; i++)
+  /*or (i = 0; i < NumOfVertexes; i++)
   {
     INT
       x = VertexesProj[i].X;
@@ -182,7 +192,9 @@ static VOID CowRender( COW *Unit, ik1ANIM *Ani )
 ik1UNIT * CowCreate( INT X, INT Y )
 {
   COW *Unit;
-  /*
+  LoadCow();
+
+  
   if ((Unit = (COW *)IK1_UnitCreate(sizeof(COW))) == NULL)
     return NULL;
 
@@ -191,10 +203,7 @@ ik1UNIT * CowCreate( INT X, INT Y )
   Unit->Render = (ik1UNIT_RENDER)CowRender;
   Unit->X = X;
   Unit->Y = Y;
-  Unit->Who = 0;
-  Unit->RandShift = rand() % 1000;
-  Unit->RandScale = 0.75 + 5.5 * rand() / (DBL)RAND_MAX;
-  return (ik1UNIT *)Unit;   */
+  return (ik1UNIT *)Unit;   
 } /* End of 'CowCreate' function */
 
 /* END OF 'MEGACOW.C' FILE */

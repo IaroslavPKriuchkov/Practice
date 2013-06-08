@@ -4,8 +4,9 @@
  * PURPOSE: Main math support implementation module.
  */
 
+#include <glew.h>
 #include <windows.h>
-
+#pragma comment(lib, "glew32")
 #define _USE_MATH_DEFINES
 
 #include <math.h>
@@ -30,9 +31,15 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   MSG msg;
   INT i;
 
-  for (i = 0; i < 1; i++)
-  {
-    IK1_AnimAdd(CowCreate(/*rand() %*/ 300, /*rand() %*/ 300));
+
+
+  for (i = 0; i < 3; i++)
+  { 
+    IK1_AnimAdd(CowCreate(rand() % 300 + 200, rand() % 300 + 200));
+
+   /* IK1_AnimAdd(CowCreate(/*rand() % 300 + 300,/* rand() % 300 + 300));
+
+    /*IK1_AnimAdd(CowCreate(/*rand() % 300 + 400,/* rand() % 300 + 400));*/
   }
 
 
@@ -79,7 +86,6 @@ LRESULT CALLBACK TranslateMessages( HWND hWnd, UINT Msg,
   {
   case WM_CREATE:
     cs = (CREATESTRUCT *)lParam;
-    LoadCow();
     if (!IK1_AnimInit(hWnd))
       return -1;
     SetTimer(hWnd, ANIMATION_TIMER, 5, NULL);

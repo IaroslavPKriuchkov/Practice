@@ -32,7 +32,8 @@ typedef struct tagik1ANIM
     CameraLookAt;
   MATR 
     MatrWorld,
-    MatrView;
+    MatrView,
+    MatrProj;
   DBL Wp, Hp, PD;
 
 } ik1ANIM;
